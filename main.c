@@ -34,12 +34,12 @@ int main()
 		switch(opcode & 0xF1)
 		{
 			case 0x80:
-				addr(cpu, opcode & 0x07);
+				addr(&cpu, opcode & 0x07);
 		}
 		switch(opcode & 0xC7)
 		{
 			case 0x06:
-				ldrn(cpu, opcode & 0x38);
+				ldrn(&cpu, opcode & 0x38);
 		}
 
 		printf("Register a: 0x%02x\n", cpu.a);
@@ -52,7 +52,8 @@ int main()
 		printf("Register l: 0x%02x\n", cpu.l);
 		printf("Register sp: 0x%04x\n", cpu.sp);
 		printf("Register pc: 0x%04x\n", cpu.pc);
-		
+	
+		// Supposed to stop after every instruction
 		scanf("Hit enter to run next command: \n");	
 	}
 
