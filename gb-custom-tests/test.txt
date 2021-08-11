@@ -1,0 +1,3 @@
+rgbasm test.asm -o test.o
+rgblink test.o -o test.gb
+rgbfix test.gb

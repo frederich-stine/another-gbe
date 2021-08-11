@@ -10,47 +10,23 @@ void jp(struct cpu_struct* cpu)
 	cpu->pc = read_word(cpu->pc, cpu->mmu);
 }
 
-void addr(struct cpu_struct* cpu, uint8_t reg)
+void add_reg(struct cpu_struct* cpu, uint8_t reg)
 {
-	switch(reg)
-	{
-		case 0x00:
-			cpu->a = cpu->a + cpu->b;
-		case 0x01:
-			cpu->a = cpu->a + cpu->c;
-		case 0x02:
-			cpu->a = cpu->a + cpu->d;
-		case 0x03:
-			cpu->a = cpu->a + cpu->e;
-		case 0x04:
-			cpu->a = cpu->a + cpu->h;
-		case 0x05:
-			cpu->a = cpu->a + cpu->l;
-		case 0x07:
-			cpu->a = cpu->a + cpu->a;
-	}
+	uint16_t temp = cpu->stand_regs[reg_a] + cpu->stand_regs[reg];
 
-	// need to do flag register
-	
+	// Flag Calculation
+	cpu->stand_regs[reg_f] = cpu->stand_regs[reg_a] == 0 ? set_z_flag : reset_z_flag;
+	cpu->stand_regs[reg_f] = reset_n_flag;
+	cpu->stand_regs[reg_f] = (cpu->stand_regs[reg] ^ cpu->stand_regs[reg_a] ^ temp) & 0x08 ? set_h_flag : reset_h_flag;
+	cpu->stand_regs[reg_f] = (temp>0xFF) ? set_c_flag : reset_c_flag;
+
+	// Result pass
+	cpu->stand_regs[reg_a] = temp;
 }
 
 void ldrn(struct cpu_struct* cpu, uint8_t reg)
 {
-	switch(reg>>3)
-	{
-		case 0x00:
-			cpu->a = read_byte(cpu->pc+1, cpu->mmu);
-		case 0x01:
-			cpu->c = read_byte(cpu->pc+1, cpu->mmu);
-		case 0x02:
-			cpu->d = read_byte(cpu->pc+1, cpu->mmu);
-		case 0x03:
-			cpu->e = read_byte(cpu->pc+1, cpu->mmu);
-		case 0x04:
-			cpu->h = read_byte(cpu->pc+1, cpu->mmu);
-		case 0x05:
-			cpu->l = read_byte(cpu->pc+1, cpu->mmu);
-		case 0x07:
-			cpu->a = read_byte(cpu->pc+1, cpu->mmu);
-	}
+	reg = reg>>3;
+
+	cpu->stand_regs[reg] = read_byte(cpu->pc++, cpu->mmu);
 }

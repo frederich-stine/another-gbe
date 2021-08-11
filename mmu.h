@@ -1,6 +1,6 @@
-#include <stdint.h>
-
 #pragma once
+
+#include <stdint.h>
 
 struct mmu_struct {
 	// first segment of ROM
