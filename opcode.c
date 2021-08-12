@@ -12,12 +12,56 @@ void jp(struct cpu_struct* cpu)
 
 void add_reg(struct cpu_struct* cpu, uint8_t reg)
 {
-	uint16_t temp = cpu->stand_regs[reg_a] + cpu->stand_regs[reg];
+	uint16_t temp = cpu->stand_regs[reg_a] + cpu->stand_regs[reg] ;
 
 	// Flag Calculation
-	cpu->stand_regs[reg_f] = cpu->stand_regs[reg_a] == 0 ? set_z_flag : reset_z_flag;
+	cpu->stand_regs[reg_f] = temp == 0 ? set_z_flag : reset_z_flag;
 	cpu->stand_regs[reg_f] = reset_n_flag;
-	cpu->stand_regs[reg_f] = (cpu->stand_regs[reg] ^ cpu->stand_regs[reg_a] ^ temp) & 0x08 ? set_h_flag : reset_h_flag;
+	cpu->stand_regs[reg_f] = (cpu->stand_regs[reg] ^ cpu->stand_regs[reg_a] ^ temp) & 0x10 ? set_h_flag : reset_h_flag;
+	cpu->stand_regs[reg_f] = (temp>0xFF) ? set_c_flag : reset_c_flag;
+
+	// Result pass
+	cpu->stand_regs[reg_a] = temp;
+}
+
+void adc_reg(struct cpu_struct* cpu, uint8_t reg)
+{
+	uint16_t temp = cpu->stand_regs[reg_a] + cpu->stand_regs[reg];
+	temp = (cpu->stand_regs[reg_f] & c_flag) ? ++temp : temp;
+
+	// Flag Calculation
+	cpu->stand_regs[reg_f] = temp == 0 ? set_z_flag : reset_z_flag;
+	cpu->stand_regs[reg_f] = reset_n_flag;
+	cpu->stand_regs[reg_f] = (cpu->stand_regs[reg] ^ cpu->stand_regs[reg_a] ^ temp) & 0x10 ? set_h_flag : reset_h_flag;
+	cpu->stand_regs[reg_f] = (temp>0xFF) ? set_c_flag : reset_c_flag;
+
+	// Result pass
+	cpu->stand_regs[reg_a] = temp;
+}
+
+void sub_reg(struct cpu_struct* cpu, uint8_t reg)
+{
+	uint16_t temp = cpu->stand_regs[reg_a] - cpu->stand_regs[reg];
+
+	// Flag Calculation
+	cpu->stand_regs[reg_f] = temp == 0 ? set_z_flag : reset_z_flag;
+	cpu->stand_regs[reg_f] = set_n_flag;
+	cpu->stand_regs[reg_f] = (cpu->stand_regs[reg] ^ cpu->stand_regs[reg_a] ^ temp) & 0x10 ? set_h_flag : reset_h_flag;
+	cpu->stand_regs[reg_f] = (temp>0xFF) ? set_c_flag : reset_c_flag;
+
+	// Result pass
+	cpu->stand_regs[reg_a] = temp;
+}
+
+void sbc_reg(struct cpu_struct* cpu, uint8_t reg)
+{
+	uint16_t temp = cpu->stand_regs[reg_a] - cpu->stand_regs[reg];
+	temp = (cpu->stand_regs[reg_f] & c_flag) ? --temp : temp;
+
+	// Flag Calculation
+	cpu->stand_regs[reg_f] = temp == 0 ? set_z_flag : reset_z_flag;
+	cpu->stand_regs[reg_f] = set_n_flag;
+	cpu->stand_regs[reg_f] = (cpu->stand_regs[reg] ^ cpu->stand_regs[reg_a] ^ temp) & 0x10 ? set_h_flag : reset_h_flag;
 	cpu->stand_regs[reg_f] = (temp>0xFF) ? set_c_flag : reset_c_flag;
 
 	// Result pass

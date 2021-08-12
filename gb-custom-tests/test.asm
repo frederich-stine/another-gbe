@@ -8,9 +8,17 @@ SECTION "Header", ROM0[$100]
 
 EntryPoint:
 	ld b, 1
+	ld c, 2
+	ld d, 3
+	ld e, 4
+	ld h, 5
+	ld l, 6
 Loop:
 	add a, b
+	sub a, c
+	add a, d
+	sub a, e
+	add a, h
+	sub a, l
 	jp Loop
-
-
 

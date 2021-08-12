@@ -18,46 +18,15 @@ int main()
 
 	while(1)
 	{
+		// Debug info
 		printf("CPU:0x%04x \n", cpu.pc);
-		opcode = read_byte(cpu.pc++, cpu.mmu);
-
-		printf("opcode:0x%02x \n", opcode);
-
-		switch(opcode)
-		{
-			case 0x06:
-				ldrn(&cpu, opcode&0x38); break;
-			case 0x0E:
-				ldrn(&cpu, opcode&0x38); break;
-			case 0x16:
-				ldrn(&cpu, opcode&0x38); break;
-			case 0x1E:
-				ldrn(&cpu, opcode&0x38); break;
-			case 0x026:
-				ldrn(&cpu, opcode&0x38); break;
-			case 0x2E:
-				ldrn(&cpu, opcode&0x38); break;
-			case 0x3E:
-				ldrn(&cpu, opcode&0x38); break;
-			case 0xC3:
-				jp(&cpu); break;
-			case 0x80:
-				add_reg(&cpu, opcode&0x07); break;
-			case 0x81:
-				add_reg(&cpu, opcode&0x07); break;
-			case 0x82:
-				add_reg(&cpu, opcode&0x07); break;
-			case 0x83:
-				add_reg(&cpu, opcode&0x07); break;
-			case 0x84:
-				add_reg(&cpu, opcode&0x07); break;
-			case 0x85:
-				add_reg(&cpu, opcode&0x07); break;
-			case 0x87:
-				add_reg(&cpu, opcode&0x07); break;
-		}
 		
+		opcode = read_byte(cpu.pc++, cpu.mmu);
+		printf("opcode:0x%02x \n", opcode);
+		
+		run_opcode(&cpu, opcode);
 
+		// Debug info
 		printf("Register a: 0x%02x\n", cpu.stand_regs[reg_a]);
 		printf("Register b: 0x%02x\n", cpu.stand_regs[reg_b]);
 		printf("Register c: 0x%02x\n", cpu.stand_regs[reg_c]);

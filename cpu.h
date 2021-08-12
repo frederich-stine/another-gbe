@@ -46,4 +46,4 @@ struct cpu_struct {
 }cpu;
 
 void reset_cpu(struct cpu_struct* cpu);
-//void run_opcode(struct cpu_struct* cpu, uint8_t opcode);
+void run_opcode(struct cpu_struct* cpu, uint8_t opcode);
