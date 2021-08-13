@@ -91,6 +91,63 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			sbc_reg(cpu, opcode&0x07); break;
 		case 0x9F:
 			sbc_reg(cpu, opcode&0x07); break;
+		case 0xA0:
+			and_reg(cpu, opcode&0x07); break;
+		case 0xA1:
+			and_reg(cpu, opcode&0x07); break;
+		case 0xA2:
+			and_reg(cpu, opcode&0x07); break;
+		case 0xA3:
+			and_reg(cpu, opcode&0x07); break;
+		case 0xA4:
+			and_reg(cpu, opcode&0x07); break;
+		case 0xA5:
+			and_reg(cpu, opcode&0x07); break;
+		case 0xA7:
+			and_reg(cpu, opcode&0x07); break;
+		case 0xA8:
+			or_reg(cpu, opcode&0x07); break;
+		case 0xA9:
+			or_reg(cpu, opcode&0x07); break;
+		case 0xAA:
+			or_reg(cpu, opcode&0x07); break;
+		case 0xAB:
+			or_reg(cpu, opcode&0x07); break;
+		case 0xAC:
+			or_reg(cpu, opcode&0x07); break;
+		case 0xAD:
+			or_reg(cpu, opcode&0x07); break;
+		case 0xAF:
+			or_reg(cpu, opcode&0x07); break;
+		case 0xB0:
+			xor_reg(cpu, opcode&0x07); break;
+		case 0xB1:
+			xor_reg(cpu, opcode&0x07); break;
+		case 0xB2:
+			xor_reg(cpu, opcode&0x07); break;
+		case 0xB3:
+			xor_reg(cpu, opcode&0x07); break;
+		case 0xB4:
+			xor_reg(cpu, opcode&0x07); break;
+		case 0xB5:
+			xor_reg(cpu, opcode&0x07); break;
+		case 0xB7:
+			xor_reg(cpu, opcode&0x07); break;
+		case 0xB8:
+			cp_reg(cpu, opcode&0x07); break;
+		case 0xB9:
+			cp_reg(cpu, opcode&0x07); break;
+		case 0xBA:
+			cp_reg(cpu, opcode&0x07); break;
+		case 0xBB:
+			cp_reg(cpu, opcode&0x07); break;
+		case 0xBC:
+			cp_reg(cpu, opcode&0x07); break;
+		case 0xBD:
+			cp_reg(cpu, opcode&0x07); break;
+		case 0xBF:
+			cp_reg(cpu, opcode&0x07); break;
+
 	}
 }
 

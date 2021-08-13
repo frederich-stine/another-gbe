@@ -10,4 +10,7 @@ void adc_reg(struct cpu_struct* cpu, uint8_t reg);
 void ldrn(struct cpu_struct* cpu, uint8_t reg);
 void sub_reg(struct cpu_struct* cpu, uint8_t reg);
 void sbc_reg(struct cpu_struct* cpu, uint8_t reg);
-
+void and_reg(struct cpu_struct* cpu, uint8_t reg);
+void or_reg(struct cpu_struct* cpu, uint8_t reg);
+void xor_reg(struct cpu_struct* cpu, uint8_t reg);
+void cp_reg(struct cpu_struct* cpu, uint8_t reg);
