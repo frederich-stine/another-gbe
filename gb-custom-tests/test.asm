@@ -7,17 +7,15 @@ SECTION "Header", ROM0[$100]
 	ds $150 - @, 0 ; Make room for the header
 
 EntryPoint:
-	ld a, $00
-	ld b, $FF
-	ld c, $00
-	ld d, 3
-	ld e, 4
-	ld h, 5
-	ld l, 6
+	ld a, $FF
+	ld b, $1
 Loop:
-	or a, b
-	xor a, b
-	and a, b
-	and a, a
+	dec a
+	inc b
+	ld c, a
+	ld d, c
+	ld e, d
+	ld h, e
+	ld l, h
 	jp Loop
 

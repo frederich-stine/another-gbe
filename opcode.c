@@ -119,4 +119,35 @@ void ldrn(struct cpu_struct* cpu, uint8_t reg)
 	cpu->stand_regs[reg] = read_byte(cpu->pc++, cpu->mmu);
 }
 
+void ld_reg(struct cpu_struct* cpu, uint8_t reg1, uint8_t reg2)
+{
+	cpu->stand_regs[reg1>>3] = cpu->stand_regs[reg2];
+}
 
+void inc_reg(struct cpu_struct* cpu, uint8_t reg)
+{
+	reg = reg>>3;
+	uint16_t temp = cpu->stand_regs[reg] + 1;
+
+	// Flag Calculation
+	cpu->stand_regs[reg_f] = temp == 0 ? set_z_flag : reset_z_flag;
+	cpu->stand_regs[reg_f] = reset_n_flag;
+	cpu->stand_regs[reg_f] = (cpu->stand_regs[reg] ^ cpu->stand_regs[reg_a] ^ temp) & 0x10 ? set_h_flag : reset_h_flag;
+
+	// Result pass
+	cpu->stand_regs[reg] = temp;
+}
+
+void dec_reg(struct cpu_struct* cpu, uint8_t reg)
+{
+	reg = reg>>3;
+	uint16_t temp = cpu->stand_regs[reg] - 1;
+
+	// Flag Calculation
+	cpu->stand_regs[reg_f] = temp == 0 ? set_z_flag : reset_z_flag;
+	cpu->stand_regs[reg_f] = set_n_flag;
+	cpu->stand_regs[reg_f] = (cpu->stand_regs[reg] ^ cpu->stand_regs[reg_a] ^ temp) & 0x10 ? set_h_flag : reset_h_flag;
+
+	// Result pass
+	cpu->stand_regs[reg] = temp;
+}
