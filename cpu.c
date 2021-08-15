@@ -15,6 +15,30 @@ void reset_cpu(struct cpu_struct* cpu)
 	printf("CPU:0x%04x \n", cpu->pc);
 }
 
+uint16_t get_double_reg(struct cpu_struct* cpu, uint8_t reg)
+{
+	uint16_t double_reg = cpu->stand_regs[reg];
+	double_reg = (double_reg << 8) | cpu->stand_regs[reg+1];
+	return double_reg;
+}
+
+void save_double_reg(struct cpu_struct* cpu, uint8_t reg, uint16_t data)
+{
+	cpu->stand_regs[reg+1] = data;
+	data = data>>8;
+	cpu->stand_regs[reg] = data;
+}
+
+void load_m_reg(struct cpu_struct* cpu, uint16_t addr)
+{
+	cpu->stand_regs[reg_m] = read_byte(addr, cpu->mmu);
+}
+
+void write_m_reg(struct cpu_struct* cpu, uint16_t addr)
+{
+	write_byte(addr, cpu->stand_regs[reg_m], cpu->mmu);
+}
+
 void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 {
 	switch(opcode)
@@ -73,6 +97,9 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x45:
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
+		case 0x46:
+			load_m_reg(cpu, get_double_reg(cpu, reg_h));
+			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x47:
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x48:
@@ -86,6 +113,9 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 		case 0x4C:
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x4D:
+			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
+		case 0x4E:
+			load_m_reg(cpu, get_double_reg(cpu, reg_h));
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x4F:
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
@@ -101,6 +131,9 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x55:
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
+		case 0x56:
+			load_m_reg(cpu, get_double_reg(cpu, reg_h));
+			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x57:
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x58:
@@ -114,6 +147,9 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 		case 0x5C:
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x5D:
+			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
+		case 0x5E:
+			load_m_reg(cpu, get_double_reg(cpu, reg_h));
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x5F:
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
@@ -129,6 +165,9 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x65:
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
+		case 0x66:
+			load_m_reg(cpu, get_double_reg(cpu, reg_h));
+			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x67:
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x68:
@@ -143,8 +182,32 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x6D:
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
+		case 0x6E:
+			load_m_reg(cpu, get_double_reg(cpu, reg_h));
+			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x6F:
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
+		case 0x70:
+			ld_reg(cpu, opcode&0x38, opcode&0x07); 
+			write_m_reg(cpu, get_double_reg(cpu, reg_h)); break;
+		case 0x71:
+			ld_reg(cpu, opcode&0x38, opcode&0x07); 
+			write_m_reg(cpu, get_double_reg(cpu, reg_h)); break;
+		case 0x72:
+			ld_reg(cpu, opcode&0x38, opcode&0x07); 
+			write_m_reg(cpu, get_double_reg(cpu, reg_h)); break;
+		case 0x73:
+			ld_reg(cpu, opcode&0x38, opcode&0x07); 
+			write_m_reg(cpu, get_double_reg(cpu, reg_h)); break;
+		case 0x74:
+			ld_reg(cpu, opcode&0x38, opcode&0x07); 
+			write_m_reg(cpu, get_double_reg(cpu, reg_h)); break;
+		case 0x75:
+			ld_reg(cpu, opcode&0x38, opcode&0x07); 
+			write_m_reg(cpu, get_double_reg(cpu, reg_h)); break;
+		case 0x77:
+			ld_reg(cpu, opcode&0x38, opcode&0x07); 
+			write_m_reg(cpu, get_double_reg(cpu, reg_h)); break;
 		case 0x78:
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x79:
@@ -156,6 +219,9 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 		case 0x7C:
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x7D:
+			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
+		case 0x7E:
+			load_m_reg(cpu, get_double_reg(cpu, reg_h));
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x7F:
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;

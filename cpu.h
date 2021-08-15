@@ -37,7 +37,6 @@
 
 struct cpu_struct {
 	// main Z80 registers
-	// uint8_t a, b, c, d, e, f, h, l;
 	// uint8_t b, c, d, e, h, l, m, a, f;
 	uint8_t stand_regs[9];
 	uint16_t sp, pc;
@@ -48,3 +47,7 @@ struct cpu_struct {
 
 void reset_cpu(struct cpu_struct* cpu);
 void run_opcode(struct cpu_struct* cpu, uint8_t opcode);
+uint16_t get_double_reg(struct cpu_struct* cpu, uint8_t reg);
+void save_double_reg(struct cpu_struct* cpu, uint8_t reg, uint16_t data);
+void load_m_reg(struct cpu_struct* cpu, uint16_t addr);
+void write_m_reg(struct cpu_struct* cpu, uint16_t addr);
