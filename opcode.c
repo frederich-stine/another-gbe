@@ -10,6 +10,46 @@ void jp(struct cpu_struct* cpu)
 	cpu->pc = read_word(cpu->pc, cpu->mmu);
 }
 
+void jpnz(struct cpu_struct* cpu)
+{
+	if(cpu->stand_regs[reg_f] & z_flag)
+	{
+		cpu->pc = cpu->pc + 2;
+		return;
+	}
+	cpu->pc = read_word(cpu->pc, cpu->mmu);
+}
+
+void jpz(struct cpu_struct* cpu)
+{
+	if(cpu->stand_regs[reg_f] & z_flag)
+	{
+		cpu->pc = read_word(cpu->pc, cpu->mmu);
+		return;
+	}
+	cpu->pc = cpu->pc+2;
+}
+
+void jpnc(struct cpu_struct* cpu)
+{
+	if(cpu->stand_regs[reg_f] & c_flag)
+	{
+		cpu->pc = cpu->pc + 2;
+		return;
+	}
+	cpu->pc = read_word(cpu->pc, cpu->mmu);
+}
+
+void jpc(struct cpu_struct* cpu)
+{
+	if(cpu->stand_regs[reg_f] & c_flag)
+	{
+		cpu->pc = read_word(cpu->pc, cpu->mmu);
+		return;
+	}
+	cpu->pc = cpu->pc + 2;
+}
+
 void add_reg(struct cpu_struct* cpu, uint8_t reg)
 {
 	uint16_t temp = cpu->stand_regs[reg_a] + cpu->stand_regs[reg] ;

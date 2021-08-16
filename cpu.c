@@ -337,8 +337,16 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			cp_reg(cpu, opcode&0x07); break;
 		case 0xBF:
 			cp_reg(cpu, opcode&0x07); break;
+		case 0xC2:
+			jpnz(cpu); break;
 		case 0xC3:
 			jp(cpu); break;
+		case 0xCA:
+			jpz(cpu); break;
+		case 0xD2:
+			jpnc(cpu); break;
+		case 0xDA:
+			jpc(cpu); break;
 
 	}
 }
