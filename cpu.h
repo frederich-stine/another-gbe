@@ -51,3 +51,4 @@ uint16_t get_double_reg(struct cpu_struct* cpu, uint8_t reg);
 void save_double_reg(struct cpu_struct* cpu, uint8_t reg, uint16_t data);
 void load_m_reg(struct cpu_struct* cpu, uint16_t addr);
 void write_m_reg(struct cpu_struct* cpu, uint16_t addr);
+void load_m_reg_imm(struct cpu_struct* cpu);

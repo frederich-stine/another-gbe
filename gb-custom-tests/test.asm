@@ -16,4 +16,6 @@ Loop:
 	push de
 	pop bc
 	pop de
+	inc bc
+	inc de
 	jp Loop

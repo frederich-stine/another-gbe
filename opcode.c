@@ -233,6 +233,20 @@ void inc_reg(struct cpu_struct* cpu, uint8_t reg)
 	cpu->stand_regs[reg] = temp;
 }
 
+void inc_dreg(struct cpu_struct* cpu, uint8_t reg)
+{
+	uint16_t data;
+	reg = reg>>3;
+	data = get_double_reg(cpu, reg);
+	data++;
+	save_double_reg(cpu, reg, data);
+}
+
+void inc_sp(struct cpu_struct* cpu)
+{
+	cpu->sp++;
+}
+
 void dec_reg(struct cpu_struct* cpu, uint8_t reg)
 {
 	reg = reg>>3;
@@ -245,6 +259,20 @@ void dec_reg(struct cpu_struct* cpu, uint8_t reg)
 
 	// Result pass
 	cpu->stand_regs[reg] = temp;
+}
+
+void dec_dreg(struct cpu_struct* cpu, uint8_t reg)
+{
+	uint16_t data;
+	reg = reg>>3;
+	data = get_double_reg(cpu, reg);
+	data--;
+	save_double_reg(cpu, reg, data);
+}
+
+void dec_sp(struct cpu_struct* cpu)
+{
+	cpu->sp--;
 }
 
 void push(struct cpu_struct* cpu, uint8_t reg)
