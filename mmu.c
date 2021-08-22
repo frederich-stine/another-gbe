@@ -92,3 +92,9 @@ uint16_t read_word(uint16_t addr, struct mmu_struct* mmu)
 {
 	return(read_byte(addr, mmu) + (read_byte(addr+1, mmu) << 8));
 }
+
+void write_word(uint16_t addr, uint16_t data, struct mmu_struct* mmu)
+{
+	write_byte(addr, (uint8_t) data, mmu);
+	write_byte(addr+1, (uint8_t) (data>>8), mmu);
+}

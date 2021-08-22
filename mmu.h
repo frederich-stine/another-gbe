@@ -26,7 +26,4 @@ void delete_mmu(struct mmu_struct* mmu);
 uint8_t read_byte(uint16_t addr, struct mmu_struct* mmu);
 uint16_t read_word(uint16_t addr, struct mmu_struct* mmu);
 void write_byte(uint16_t addr, uint8_t data, struct mmu_struct* mmu);
-
-
-
-
+void write_word(uint16_t addr, uint16_t data, struct mmu_struct* mmu);

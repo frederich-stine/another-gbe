@@ -1,4 +1,5 @@
 #include "opcode.h"
+#include <stdio.h>
 
 void nop(struct cpu_struct* cpu)
 {
@@ -48,6 +49,60 @@ void jpc(struct cpu_struct* cpu)
 		return;
 	}
 	cpu->pc = cpu->pc + 2;
+}
+
+void jr(struct cpu_struct* cpu)
+{
+	int8_t offset = read_byte(cpu->pc, cpu->mmu);
+	cpu->pc += offset;
+}
+
+void jrnz(struct cpu_struct* cpu)
+{
+	int8_t offset;
+	if(cpu->stand_regs[reg_f] & z_flag)
+	{
+		cpu->pc = cpu->pc + 1;
+		return;
+	}
+	offset = read_byte(cpu->pc, cpu->mmu);
+	cpu->pc += offset;
+}
+
+void jrz(struct cpu_struct* cpu)
+{
+	int8_t offset;
+	if(cpu->stand_regs[reg_f] & z_flag)
+	{
+		offset = read_byte(cpu->pc, cpu->mmu);
+		cpu->pc += offset;
+		return;
+	}
+	cpu->pc = cpu->pc+1;
+}
+
+void jrnc(struct cpu_struct* cpu)
+{
+	int8_t offset;
+	if(cpu->stand_regs[reg_f] & c_flag)
+	{
+		cpu->pc = cpu->pc + 1;
+		return;
+	}
+	offset = read_byte(cpu->pc, cpu->mmu);
+	cpu->pc += offset;
+}
+
+void jrc(struct cpu_struct* cpu)
+{
+	int8_t offset;
+	if(cpu->stand_regs[reg_f] & c_flag)
+	{
+		offset = read_byte(cpu->pc, cpu->mmu);
+		cpu->pc += offset;
+		return;
+	}
+	cpu->pc = cpu->pc + 1;
 }
 
 void add_reg(struct cpu_struct* cpu, uint8_t reg)
@@ -190,4 +245,30 @@ void dec_reg(struct cpu_struct* cpu, uint8_t reg)
 
 	// Result pass
 	cpu->stand_regs[reg] = temp;
+}
+
+void push(struct cpu_struct* cpu, uint8_t reg)
+{
+	reg = reg>>3;
+	write_word(cpu->sp, get_double_reg(cpu, reg),cpu->mmu); 
+	cpu->sp = cpu->sp - 2;
+}
+
+void pop(struct cpu_struct* cpu, uint8_t reg)
+{
+	reg = reg>>3;
+	cpu->sp = cpu->sp + 2;
+	save_double_reg(cpu, reg, read_word(cpu->sp, cpu->mmu));
+}
+
+void push_af(struct cpu_struct* cpu)
+{
+	write_word(cpu->sp, get_double_reg(cpu, reg_a),cpu->mmu); 
+	cpu->sp = cpu->sp - 2;
+}
+
+void pop_af(struct cpu_struct* cpu)
+{
+	cpu->sp = cpu->sp + 2;
+	save_double_reg(cpu, reg_a, read_word(cpu->sp, cpu->mmu));
 }
