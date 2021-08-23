@@ -207,11 +207,27 @@ void cp_reg(struct cpu_struct* cpu, uint8_t reg)
 	cpu->stand_regs[reg_f] = (temp>0xFF) ? set_c_flag : reset_c_flag;
 }
 
-void ldrn(struct cpu_struct* cpu, uint8_t reg)
+void ld_reg_imm(struct cpu_struct* cpu, uint8_t reg)
 {
 	reg = reg>>3;
-
+	
 	cpu->stand_regs[reg] = read_byte(cpu->pc++, cpu->mmu);
+}
+
+void ld_dreg_imm(struct cpu_struct* cpu, uint8_t reg)
+{
+	uint16_t data;
+	reg = reg>>3;
+	data = read_word(cpu->pc, cpu->mmu);
+	cpu->pc += 2;
+	save_double_reg(cpu, reg, data);
+}
+
+void ld_dreg_imm_sp(struct cpu_struct* cpu)
+{
+	uint16_t data;
+	cpu->sp = read_word(cpu->pc, cpu->mmu);
+	cpu->pc += 2;
 }
 
 void ld_reg(struct cpu_struct* cpu, uint8_t reg1, uint8_t reg2)
@@ -300,3 +316,59 @@ void pop_af(struct cpu_struct* cpu)
 	cpu->sp = cpu->sp + 2;
 	save_double_reg(cpu, reg_a, read_word(cpu->sp, cpu->mmu));
 }
+
+void call(struct cpu_struct* cpu)
+{
+	write_word(cpu->sp, cpu->pc+2, cpu->mmu); 
+	cpu->sp = cpu->sp - 2;
+	jp(cpu);
+}
+
+void callnz(struct cpu_struct* cpu)
+{
+	if(cpu->stand_regs[reg_f] & z_flag)
+	{
+		cpu->pc = cpu->pc + 2;
+		return;
+	}
+	write_word(cpu->sp, cpu->pc+2, cpu->mmu); 
+	cpu->sp = cpu->sp - 2;
+	jp(cpu);
+}
+
+void callz(struct cpu_struct* cpu)
+{
+	if(cpu->stand_regs[reg_f] & z_flag)
+	{
+		write_word(cpu->sp, cpu->pc+2, cpu->mmu); 
+		cpu->sp = cpu->sp - 2;
+		jp(cpu);
+		return;
+	}
+	cpu->pc = cpu->pc + 2;
+}
+
+void callnc(struct cpu_struct* cpu)
+{
+	if(cpu->stand_regs[reg_f] & c_flag)
+	{
+		cpu->pc = cpu->pc + 2;
+		return;
+	}
+	write_word(cpu->sp, cpu->pc+2, cpu->mmu); 
+	cpu->sp = cpu->sp - 2;
+	jp(cpu);
+}
+
+void callc(struct cpu_struct* cpu)
+{
+	if(cpu->stand_regs[reg_f] & c_flag)
+	{
+		write_word(cpu->sp, cpu->pc+2, cpu->mmu); 
+		cpu->sp = cpu->sp - 2;
+		jp(cpu);
+		return;
+	}
+	cpu->pc = cpu->pc + 2;
+}
+

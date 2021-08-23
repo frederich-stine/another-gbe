@@ -7,11 +7,16 @@ SECTION "Header", ROM0[$100]
 	ds $150 - @, 0 ; Make room for the header
 
 EntryPoint:
-	ld h, $03
-	ld l, $00
-	ld b, $04
-	ld [hl], b
-Loop:
-	inc [hl]
-	ld b, [hl]
-	jp Loop
+	ld a, $00
+	ld b, $01
+	ld c, b
+	ld hl, $0500
+Fibonacci:
+	add b
+	ld [hl+], a
+	ld b, c
+	ld c, a
+	cp 233
+	call nz, Fibonacci
+Done:
+	jp Done
