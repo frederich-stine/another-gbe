@@ -106,6 +106,14 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			jrnc(cpu); break;
 		case 0x33:
 			inc_sp(cpu); break;
+		case 0x34:
+			load_m_reg(cpu, get_double_reg(cpu, reg_h));
+			inc_reg(cpu, opcode&0x38);
+			write_m_reg(cpu, get_double_reg(cpu, reg_h)); break;
+		case 0x35:
+			load_m_reg(cpu, get_double_reg(cpu, reg_h));
+			dec_reg(cpu, opcode&0x38);
+			write_m_reg(cpu, get_double_reg(cpu, reg_h)); break;
 		case 0x38:
 			jrc(cpu); break;
 		case 0x3B:
