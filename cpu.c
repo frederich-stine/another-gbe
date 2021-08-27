@@ -132,6 +132,9 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			load_m_reg(cpu, get_double_reg(cpu, reg_h));
 			dec_reg(cpu, opcode&0x38);
 			write_m_reg(cpu, get_double_reg(cpu, reg_h)); break;
+		case 0x36:
+			ld_reg_imm(cpu, reg_m);
+			write_m_reg(cpu, get_double_reg(cpu, reg_h)); break;
 		case 0x38:
 			jrc(cpu); break;
 		case 0x3B:
@@ -418,6 +421,8 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			cp_reg(cpu, opcode&0x07); break;
 		case 0xBF:
 			cp_reg(cpu, opcode&0x07); break;
+		case 0xC0:
+			retnz(cpu); break;
 		case 0xC1:
 			pop(cpu, opcode&0x30); break;
 		case 0xC2:
@@ -431,6 +436,12 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 		case 0xC6:
 			load_m_reg_imm(cpu);
 			add_reg(cpu, reg_m); break;
+		case 0xC7:
+			rst(cpu, 0x00); break;
+		case 0xC8:
+			retz(cpu); break;
+		case 0xC9:
+			ret(cpu); break;
 		case 0xCA:
 			jpz(cpu); break;
 		case 0xCC:
@@ -440,6 +451,10 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 		case 0xCE:
 			load_m_reg_imm(cpu);
 			adc_reg(cpu, reg_m); break;
+		case 0xCF:
+			rst(cpu, 0x08); break;
+		case 0xD0:
+			retnc(cpu); break;
 		case 0xD1:
 			pop(cpu, opcode&0x30); break;
 		case 0xD2:
@@ -451,9 +466,10 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 		case 0xD6:
 			load_m_reg_imm(cpu);
 			sub_reg(cpu, reg_m); break;
+		case 0xD7:
+			rst(cpu, 0x10); break;
 		case 0xD8:
-			load_m_reg_imm(cpu);
-			cp_reg(cpu, reg_m); break;
+			retc(cpu); break;
 		case 0xDA:
 			jpc(cpu); break;
 		case 0xDC:
@@ -461,6 +477,8 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 		case 0xDE:
 			load_m_reg_imm(cpu);
 			sbc_reg(cpu, reg_m); break;
+		case 0xDF:
+			rst(cpu, 0x18); break;
 		case 0xE1:
 			pop(cpu, opcode&0x30); break;
 		case 0xE5:
@@ -468,9 +486,13 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 		case 0xE6:
 			load_m_reg_imm(cpu);
 			and_reg(cpu, reg_m); break;
+		case 0xE7:
+			rst(cpu, 0x20); break;
 		case 0xEE:
 			load_m_reg_imm(cpu);
 			xor_reg(cpu, reg_m); break;
+		case 0xEF:
+			rst(cpu, 0x30); break;
 		case 0xF1:
 			pop_af(cpu); break;
 		case 0xF5:
@@ -478,9 +500,13 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 		case 0xF6:
 			load_m_reg_imm(cpu);
 			or_reg(cpu, reg_m); break;
+		case 0xF7:
+			rst(cpu, 0x28); break;
 		case 0xFE:
 			load_m_reg_imm(cpu);
 			cp_reg(cpu, reg_m); break;
+		case 0xFF:
+			rst(cpu, 0x38); break;
 	}
 }
 

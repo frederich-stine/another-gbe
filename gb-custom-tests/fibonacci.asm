@@ -8,18 +8,15 @@ SECTION "Header", ROM0[$100]
 
 EntryPoint:
 	ld a, $00
-	ld b, $00
-	ld c, $10
-FunA:
-	call FunB
-	jp Done
-FunB:
-	dec c
-	call nz, FunC
-	cp c
-	jp nz, FunB
-FunC:
-	inc b
-	ret
+	ld b, $01
+	ld c, b
+	ld hl, $0500
+Fibonacci:
+	add b
+	ld [hl+], a
+	ld b, c
+	ld c, a
+	cp 233
+	call nz, Fibonacci
 Done:
 	jp Done

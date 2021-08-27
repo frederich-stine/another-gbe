@@ -372,3 +372,54 @@ void callc(struct cpu_struct* cpu)
 	cpu->pc = cpu->pc + 2;
 }
 
+void ret(struct cpu_struct* cpu)
+{
+	cpu->sp = cpu->sp + 2;
+	cpu->pc = read_word(cpu->sp, cpu->mmu); 
+}
+
+void retnz(struct cpu_struct* cpu)
+{
+	if(cpu->stand_regs[reg_f] & z_flag)
+		return;
+	cpu->sp = cpu->sp + 2;
+	cpu->pc = read_word(cpu->sp, cpu->mmu); 
+}
+
+void retz(struct cpu_struct* cpu)
+{
+	if(cpu->stand_regs[reg_f] & z_flag)
+	{
+		cpu->sp = cpu->sp + 2;
+		cpu->pc = read_word(cpu->sp, cpu->mmu); 
+		return;
+	}
+}
+
+void retnc(struct cpu_struct* cpu)
+{
+	if(cpu->stand_regs[reg_f] & c_flag)
+		return;
+	cpu->sp = cpu->sp + 2;
+	cpu->pc = read_word(cpu->sp, cpu->mmu); 
+}
+
+void retc(struct cpu_struct* cpu)
+{
+	if(cpu->stand_regs[reg_f] & c_flag)
+	{
+		cpu->sp = cpu->sp + 2;
+		cpu->pc = read_word(cpu->sp, cpu->mmu); 
+		return;
+	}
+}
+
+void rst(struct cpu_struct* cpu, uint8_t offset)
+{
+	write_word(cpu->sp, cpu->pc, cpu->mmu); 
+	cpu->sp = cpu->sp - 2;
+
+	cpu->pc = offset;
+}
+
+
