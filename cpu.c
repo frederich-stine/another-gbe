@@ -61,6 +61,15 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			dec_reg(cpu, opcode&0x38); break;
 		case 0x06:
 			ld_reg_imm(cpu, opcode&0x38); break;
+		case 0x07:
+			rlc(cpu, reg_a); break;
+		case 0x08:
+			ld_imm_indir_dst_sp(cpu); break;
+		case 0x09:
+			add_dreg(cpu, opcode&0x30); break;
+		case 0x0A:
+			load_m_reg(cpu, get_double_reg(cpu, reg_b));
+			ld_reg(cpu, 0x38, 0x06); break;
 		case 0x0B:
 			dec_dreg(cpu, opcode&0x30); break;
 		case 0x0C:
@@ -69,6 +78,8 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			dec_reg(cpu, opcode&0x38); break;
 		case 0x0E:
 			ld_reg_imm(cpu, opcode&0x38); break;
+		case 0x0F:
+			rrc(cpu, reg_a); break;
 		case 0x11:
 			ld_dreg_imm(cpu, opcode&0x30); break;
 		case 0x12:
@@ -81,8 +92,15 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			dec_reg(cpu, opcode&0x38); break;
 		case 0x16:
 			ld_reg_imm(cpu, opcode&0x38); break;
+		case 0x17:
+			rl(cpu, reg_a); break;
 		case 0x18:
 			jr(cpu); break;
+		case 0x19:
+			add_dreg(cpu, opcode&0x30); break;
+		case 0x1A:
+			load_m_reg(cpu, get_double_reg(cpu, reg_d));
+			ld_reg(cpu, 0x38, 0x06); break;
 		case 0x1B:
 			dec_dreg(cpu, opcode&0x30); break;
 		case 0x1C:
@@ -91,6 +109,8 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			dec_reg(cpu, opcode&0x38); break;
 		case 0x1E:
 			ld_reg_imm(cpu, opcode&0x38); break;
+		case 0x1F:
+			rr(cpu, reg_a); break;
 		case 0x20:
 			jrnz(cpu); break;
 		case 0x21:
@@ -108,6 +128,12 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			ld_reg_imm(cpu, opcode&0x38); break;
 		case 0x28:
 			jrz(cpu); break;
+		case 0x29:
+			add_dreg(cpu, opcode&0x30); break;
+		case 0x2A:
+			load_m_reg(cpu, get_double_reg(cpu, reg_h));
+			ld_reg(cpu, 0x38, 0x06); 
+			inc_dreg(cpu, 0x20); break;
 		case 0x2B:
 			dec_dreg(cpu, opcode&0x30); break;
 		case 0x2C:
@@ -116,6 +142,8 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			dec_reg(cpu, opcode&0x38); break;
 		case 0x2E:
 			ld_reg_imm(cpu, opcode&0x38); break;
+		case 0x2F:
+			cpl(cpu); break;
 		case 0x30:
 			jrnc(cpu); break;
 		case 0x31:
@@ -136,8 +164,16 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 		case 0x36:
 			ld_reg_imm(cpu, reg_m);
 			write_m_reg(cpu, get_double_reg(cpu, reg_h)); break;
+		case 0x37:
+			scf(cpu); break;	
 		case 0x38:
 			jrc(cpu); break;
+		case 0x39:
+			add_dreg_sp(cpu); break;
+		case 0x3A:
+			load_m_reg(cpu, get_double_reg(cpu, reg_h));
+			ld_reg(cpu, 0x38, 0x06); 
+			dec_dreg(cpu, 0x20); break;
 		case 0x3B:
 			dec_sp(cpu); break;
 		case 0x3C:
@@ -146,6 +182,8 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			dec_reg(cpu, opcode&0x38); break;
 		case 0x3E:
 			ld_reg_imm(cpu, opcode&0x38); break;
+		case 0x3F:
+			ccf(cpu); break;
 		case 0x40:
 			ld_reg(cpu, opcode&0x38, opcode&0x07); break;
 		case 0x41:
@@ -482,8 +520,12 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			sbc_reg(cpu, reg_m); break;
 		case 0xDF:
 			rst(cpu, 0x18); break;
+		case 0xE0:
+			ld_index_dst(cpu); break;
 		case 0xE1:
 			pop(cpu, opcode&0x30); break;
+		case 0xE2:
+			ld_rindex_dst(cpu); break;
 		case 0xE5:
 			push(cpu, opcode&0x30); break;
 		case 0xE6:
@@ -491,13 +533,23 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			and_reg(cpu, reg_m); break;
 		case 0xE7:
 			rst(cpu, 0x20); break;
+		case 0xE8:
+			add_imm_sp(cpu); break;
+		case 0xE9:
+			jphl(cpu); break;
+		case 0xEA:
+			ld_imm_indir_dst(cpu); break;
 		case 0xEE:
 			load_m_reg_imm(cpu);
 			xor_reg(cpu, reg_m); break;
 		case 0xEF:
 			rst(cpu, 0x30); break;
+		case 0xF0:
+			ld_index_src(cpu); break;
 		case 0xF1:
 			pop_af(cpu); break;
+		case 0xF2:
+			ld_rindex_src(cpu); break;
 		case 0xF3:
 			cpu->int_en = 0; break;
 		case 0xF5:
@@ -507,6 +559,12 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			or_reg(cpu, reg_m); break;
 		case 0xF7:
 			rst(cpu, 0x28); break;
+		case 0xF8:
+			ld_dreg_imm_index_sp(cpu); break;
+		case 0xF9:
+			ld_dreg_sp(cpu); break;
+		case 0xFA:
+			ld_imm_indir_src(cpu); break;
 		case 0xFB:
 			cpu->int_en = 1; break;
 		case 0xFE:

@@ -59,6 +59,7 @@ void jpc(struct cpu_struct* cpu)
 void jr(struct cpu_struct* cpu)
 {
 	int8_t offset = read_byte(cpu->pc, cpu->mmu);
+
 	cpu->pc += offset;
 }
 
@@ -168,6 +169,57 @@ void adc_reg(struct cpu_struct* cpu, uint8_t reg)
 	cpu->stand_regs[reg_a] = temp;
 }
 
+void add_dreg(struct cpu_struct* cpu, uint8_t reg)
+{
+	reg = reg >> 4;
+
+	uint16_t val1 = get_double_reg(cpu, reg_h);
+	uint16_t val2 = get_double_reg(cpu, reg);
+
+	uint32_t temp = val1+val2;
+
+	// Flag Calculation
+	cpu->stand_regs[reg_f] = temp == 0 ? set_z_flag : reset_z_flag;
+	cpu->stand_regs[reg_f] = reset_n_flag;
+	cpu->stand_regs[reg_f] = (val2 ^ cpu->stand_regs[reg_a] ^ temp) & 0x1000 ? set_h_flag : reset_h_flag;
+	cpu->stand_regs[reg_f] = (temp>0xFFFF) ? set_c_flag : reset_c_flag;
+
+	// Result pass
+	cpu->stand_regs[reg_a] = temp;
+}
+
+void add_dreg_sp(struct cpu_struct* cpu)
+{
+	uint16_t val1 = get_double_reg(cpu, reg_h);
+
+	uint32_t temp = val1+cpu->sp;
+
+	// Flag Calculation
+	cpu->stand_regs[reg_f] = temp == 0 ? set_z_flag : reset_z_flag;
+	cpu->stand_regs[reg_f] = reset_n_flag;
+	cpu->stand_regs[reg_f] = (cpu->sp ^ cpu->stand_regs[reg_a] ^ temp) & 0x1000 ? set_h_flag : reset_h_flag;
+	cpu->stand_regs[reg_f] = (temp>0xFFFF) ? set_c_flag : reset_c_flag;
+
+	// Result pass
+	cpu->stand_regs[reg_a] = temp;
+}
+
+void add_imm_sp(struct cpu_struct* cpu)
+{
+	int8_t val1 = read_byte(cpu->pc++, cpu->mmu);
+
+	uint32_t temp = val1+cpu->sp;
+
+	// Flag Calculation
+	cpu->stand_regs[reg_f] = reset_z_flag;
+	cpu->stand_regs[reg_f] = reset_n_flag;
+	cpu->stand_regs[reg_f] = (cpu->sp ^ cpu->stand_regs[reg_a] ^ temp) & 0x1000 ? set_h_flag : reset_h_flag;
+	cpu->stand_regs[reg_f] = (temp>0xFFFF) ? set_c_flag : reset_c_flag;
+
+	// Result pass
+	cpu->sp = temp;
+}
+
 void sub_reg(struct cpu_struct* cpu, uint8_t reg)
 {
 	uint16_t temp = cpu->stand_regs[reg_a] - cpu->stand_regs[reg];
@@ -267,6 +319,81 @@ void ld_dreg_imm_sp(struct cpu_struct* cpu)
 void ld_reg(struct cpu_struct* cpu, uint8_t reg1, uint8_t reg2)
 {
 	cpu->stand_regs[reg1>>3] = cpu->stand_regs[reg2];
+}
+
+void ld_index_src(struct cpu_struct* cpu)
+{
+	uint16_t addr = 0xFF00;
+	int8_t offset = read_byte(cpu->pc++, cpu->mmu);
+	addr += offset;
+
+	write_byte(addr, cpu->stand_regs[reg_a], cpu->mmu); 
+}
+
+void ld_index_dst(struct cpu_struct* cpu)
+{
+	uint16_t addr = 0xFF00;
+	int8_t offset = read_byte(cpu->pc++, cpu->mmu);
+	addr += offset;
+
+	cpu->stand_regs[reg_a] = read_byte(addr, cpu->mmu); 
+}
+
+void ld_rindex_dst(struct cpu_struct* cpu)
+{
+	uint16_t addr = 0xFF00 + cpu->stand_regs[reg_c];
+
+	write_byte(addr, cpu->stand_regs[reg_a], cpu->mmu); 
+}
+
+void ld_rindex_src(struct cpu_struct* cpu)
+{
+	uint16_t addr = 0xFF00 + cpu->stand_regs[reg_c];
+
+	cpu->stand_regs[reg_a] = read_byte(addr, cpu->mmu); 
+}
+
+void ld_imm_indir_dst(struct cpu_struct* cpu)
+{
+	uint16_t addr = read_word(cpu->pc, cpu->mmu);
+	cpu->pc += 2;
+
+	write_byte(addr, cpu->stand_regs[reg_a], cpu->mmu); 
+}
+
+void ld_dreg_imm_index_sp(struct cpu_struct* cpu)
+{
+	int8_t offset = read_byte(cpu->pc++, cpu->mmu);
+	uint32_t temp = offset + cpu->sp;
+
+	cpu->stand_regs[reg_f] = reset_z_flag;
+	cpu->stand_regs[reg_f] = reset_n_flag;
+
+	cpu->stand_regs[reg_f] = (cpu->sp ^ offset ^ temp) & 0x1000 ? set_h_flag : reset_h_flag;
+	cpu->stand_regs[reg_f] = (temp>0xFFFF) ? set_c_flag : reset_c_flag;
+
+	save_double_reg(cpu, reg_h, temp);
+}
+
+void ld_dreg_sp(struct cpu_struct* cpu)
+{
+	cpu->sp = get_double_reg(cpu, reg_h);
+}
+
+void ld_imm_indir_src(struct cpu_struct* cpu)
+{
+	uint16_t addr = read_word(cpu->pc, cpu->mmu);
+	cpu->pc += 2;
+
+	cpu->stand_regs[reg_a] = read_byte(addr, cpu->mmu); 
+}
+
+void ld_imm_indir_dst_sp(struct cpu_struct* cpu)
+{
+	uint16_t addr = read_word(cpu->pc, cpu->mmu);
+	cpu->pc += 2;
+
+	write_word(addr, cpu->sp, cpu->mmu); 
 }
 
 void inc_reg(struct cpu_struct* cpu, uint8_t reg)
