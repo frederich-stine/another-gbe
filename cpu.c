@@ -580,7 +580,78 @@ void run_opcode_prefix(struct cpu_struct* cpu)
 	uint8_t opcode = read_byte(cpu->pc++, cpu->mmu); 
 	printf("opcode:0x%02x \n", opcode);
 
-	
+	switch(opcode)
+	{
+		case 0x00:
+			rlc(cpu, opcode&0x07); break;
+		case 0x01:
+			rlc(cpu, opcode&0x07); break;
+		case 0x02:
+			rlc(cpu, opcode&0x07); break;
+		case 0x03:
+			rlc(cpu, opcode&0x07); break;
+		case 0x04:
+			rlc(cpu, opcode&0x07); break;
+		case 0x05:
+			rlc(cpu, opcode&0x07); break;
+		case 0x06:
+			load_m_reg(cpu, get_double_reg(cpu, reg_h));
+			rlc(cpu, opcode&0x07); break;
+		case 0x07:
+			rlc(cpu, opcode&0x07); break;
+		case 0x08:
+			rrc(cpu, opcode&0x07); break;
+		case 0x09:
+			rrc(cpu, opcode&0x07); break;
+		case 0x0A:
+			rrc(cpu, opcode&0x07); break;
+		case 0x0B:
+			rrc(cpu, opcode&0x07); break;
+		case 0x0C:
+			rrc(cpu, opcode&0x07); break;
+		case 0x0D:
+			rrc(cpu, opcode&0x07); break;
+		case 0x0E:
+			load_m_reg(cpu, get_double_reg(cpu, reg_h));
+			rrc(cpu, opcode&0x07); break;
+		case 0x0F:
+			rrc(cpu, opcode&0x07); break;
+		case 0x10:
+			rl(cpu, opcode&0x07); break;
+		case 0x11:
+			rl(cpu, opcode&0x07); break;
+		case 0x12:
+			rl(cpu, opcode&0x07); break;
+		case 0x13:
+			rl(cpu, opcode&0x07); break;
+		case 0x14:
+			rl(cpu, opcode&0x07); break;
+		case 0x15:
+			rl(cpu, opcode&0x07); break;
+		case 0x16:
+			load_m_reg(cpu, get_double_reg(cpu, reg_h));
+			rl(cpu, opcode&0x07); break;
+		case 0x17:
+			rl(cpu, opcode&0x07); break;
+		case 0x18:
+			rr(cpu, opcode&0x07); break;
+		case 0x19:
+			rr(cpu, opcode&0x07); break;
+		case 0x1A:
+			rr(cpu, opcode&0x07); break;
+		case 0x1B:
+			rr(cpu, opcode&0x07); break;
+		case 0x1C:
+			rr(cpu, opcode&0x07); break;
+		case 0x1D:
+			rr(cpu, opcode&0x07); break;
+		case 0x1E:
+			load_m_reg(cpu, get_double_reg(cpu, reg_h));
+			rr(cpu, opcode&0x07); break;
+		case 0x1F:
+			rr(cpu, opcode&0x07); break;
+
+	}
 
 
 }
