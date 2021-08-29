@@ -11,6 +11,11 @@ void jp(struct cpu_struct* cpu)
 	cpu->pc = read_word(cpu->pc, cpu->mmu);
 }
 
+void jphl(struct cpu_struct* cpu)
+{
+	cpu->pc = get_double_reg(cpu, reg_h);
+}
+
 void jpnz(struct cpu_struct* cpu)
 {
 	if(cpu->stand_regs[reg_f] & z_flag)
@@ -103,6 +108,35 @@ void jrc(struct cpu_struct* cpu)
 		return;
 	}
 	cpu->pc = cpu->pc + 1;
+}
+
+void cpl(struct cpu_struct* cpu)
+{
+	cpu->stand_regs[reg_a] = cpu->stand_regs[reg_a] ^ 0xFF;
+
+	cpu->stand_regs[reg_f] = set_n_flag;
+	cpu->stand_regs[reg_f] = set_h_flag;
+}
+
+void ccf(struct cpu_struct* cpu)
+{
+	if(cpu->stand_regs[reg_f] & c_flag)
+		cpu->stand_regs[reg_f] = reset_c_flag;
+	else
+		cpu->stand_regs[reg_f] = set_c_flag;
+}
+
+void daa(struct cpu_struct* cpu)
+{
+
+}
+
+void scf(struct cpu_struct* cpu)
+{
+	cpu->stand_regs[reg_f] = set_c_flag;
+
+	cpu->stand_regs[reg_f] = reset_n_flag;
+	cpu->stand_regs[reg_f] = reset_h_flag;
 }
 
 void add_reg(struct cpu_struct* cpu, uint8_t reg)
@@ -414,6 +448,13 @@ void retc(struct cpu_struct* cpu)
 	}
 }
 
+void reti(struct cpu_struct* cpu)
+{
+	cpu->sp = cpu->sp + 2;
+	cpu->pc = read_word(cpu->sp, cpu->mmu); 
+	cpu->int_en = 1;
+}
+
 void rst(struct cpu_struct* cpu, uint8_t offset)
 {
 	write_word(cpu->sp, cpu->pc, cpu->mmu); 
@@ -422,4 +463,64 @@ void rst(struct cpu_struct* cpu, uint8_t offset)
 	cpu->pc = offset;
 }
 
+void rlc(struct cpu_struct* cpu, uint8_t reg)
+{
+	if (cpu->stand_regs[reg] & 0x80)
+		cpu->stand_regs[reg_f] = set_c_flag;
+	cpu->stand_regs[reg] << 1;
 
+	if (cpu->stand_regs[reg] == 0)
+		cpu->stand_regs[reg_f] = set_z_flag;
+
+	cpu->stand_regs[reg_f] = reset_n_flag;
+	cpu->stand_regs[reg_f] = reset_h_flag;
+}
+
+void rl(struct cpu_struct* cpu, uint8_t reg)
+{
+	uint8_t oldcarry = cpu->stand_regs[reg_f] & c_flag;
+	if (cpu->stand_regs[reg] & 0x80)
+		cpu->stand_regs[reg_f] = set_c_flag;
+	
+	cpu->stand_regs[reg] << 1;
+
+	if (oldcarry)
+		cpu->stand_regs[reg] = cpu->stand_regs[reg] | 0x01;
+
+	if (cpu->stand_regs[reg] == 0)
+		cpu->stand_regs[reg_f] = set_z_flag;
+
+	cpu->stand_regs[reg_f] = reset_n_flag;
+	cpu->stand_regs[reg_f] = reset_h_flag;
+}
+
+void rrc(struct cpu_struct* cpu, uint8_t reg)
+{
+	if (cpu->stand_regs[reg] & 0x01)
+		cpu->stand_regs[reg_f] = set_c_flag;
+	cpu->stand_regs[reg] >> 1;
+
+	if (cpu->stand_regs[reg] == 0)
+		cpu->stand_regs[reg_f] = set_z_flag;
+
+	cpu->stand_regs[reg_f] = reset_n_flag;
+	cpu->stand_regs[reg_f] = reset_h_flag;
+}
+
+void rr(struct cpu_struct* cpu, uint8_t reg)
+{
+	uint8_t oldcarry = cpu->stand_regs[reg_f] & c_flag;
+	if (cpu->stand_regs[reg] & 0x01)
+		cpu->stand_regs[reg_f] = set_c_flag;
+	
+	cpu->stand_regs[reg] >> 1;
+
+	if (oldcarry)
+		cpu->stand_regs[reg] = cpu->stand_regs[reg] | 0x80;
+
+	if (cpu->stand_regs[reg] == 0)
+		cpu->stand_regs[reg_f] = set_z_flag;
+
+	cpu->stand_regs[reg_f] = reset_n_flag;
+	cpu->stand_regs[reg_f] = reset_h_flag;
+}

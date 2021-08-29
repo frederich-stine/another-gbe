@@ -11,6 +11,7 @@ void reset_cpu(struct cpu_struct* cpu)
 
 	cpu->sp = 0xFFFE;
 	cpu->pc = 0x0100;
+	cpu->int_en = 1;
 
 	printf("CPU:0x%04x \n", cpu->pc);
 }
@@ -470,6 +471,8 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			rst(cpu, 0x10); break;
 		case 0xD8:
 			retc(cpu); break;
+		case 0xD9:
+			reti(cpu); break;
 		case 0xDA:
 			jpc(cpu); break;
 		case 0xDC:
@@ -495,6 +498,8 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			rst(cpu, 0x30); break;
 		case 0xF1:
 			pop_af(cpu); break;
+		case 0xF3:
+			cpu->int_en = 0; break;
 		case 0xF5:
 			push_af(cpu); break;
 		case 0xF6:
@@ -502,6 +507,8 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 			or_reg(cpu, reg_m); break;
 		case 0xF7:
 			rst(cpu, 0x28); break;
+		case 0xFB:
+			cpu->int_en = 1; break;
 		case 0xFE:
 			load_m_reg_imm(cpu);
 			cp_reg(cpu, reg_m); break;
@@ -510,3 +517,12 @@ void run_opcode(struct cpu_struct* cpu, uint8_t opcode)
 	}
 }
 
+void run_opcode_prefix(struct cpu_struct* cpu)
+{
+	uint8_t opcode = read_byte(cpu->pc++, cpu->mmu); 
+	printf("opcode:0x%02x \n", opcode);
+
+	
+
+
+}

@@ -41,12 +41,15 @@ struct cpu_struct {
 	uint8_t stand_regs[9];
 	uint16_t sp, pc;
 
+	uint8_t int_en;
+
 	struct mmu_struct* mmu;
 
 }cpu;
 
 void reset_cpu(struct cpu_struct* cpu);
 void run_opcode(struct cpu_struct* cpu, uint8_t opcode);
+void run_opcode_prefix(struct cpu_struct* cpu);
 uint16_t get_double_reg(struct cpu_struct* cpu, uint8_t reg);
 void save_double_reg(struct cpu_struct* cpu, uint8_t reg, uint16_t data);
 void load_m_reg(struct cpu_struct* cpu, uint16_t addr);

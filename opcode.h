@@ -5,6 +5,7 @@
 
 void nop(struct cpu_struct* cpu);
 void jp(struct cpu_struct* cpu);
+void jphl(struct cpu_struct* cpu);
 void jpnz(struct cpu_struct* cpu);
 void jpz(struct cpu_struct* cpu);
 void jpnc(struct cpu_struct* cpu);
@@ -14,6 +15,10 @@ void jrnz(struct cpu_struct* cpu);
 void jrz(struct cpu_struct* cpu);
 void jrnc(struct cpu_struct* cpu);
 void jrc(struct cpu_struct* cpu);
+void cpl(struct cpu_struct* cpu);
+void ccf(struct cpu_struct* cpu);
+void daa(struct cpu_struct* cpu);
+void scf(struct cpu_struct* cpu);
 void add_reg(struct cpu_struct* cpu, uint8_t reg);
 void adc_reg(struct cpu_struct* cpu, uint8_t reg);
 void ld_reg_imm(struct cpu_struct* cpu, uint8_t reg);
@@ -47,3 +52,9 @@ void retz(struct cpu_struct* cpu);
 void retnc(struct cpu_struct* cpu);
 void retc(struct cpu_struct* cpu);
 void rst(struct cpu_struct* cpu, uint8_t offset);
+void reti(struct cpu_struct* cpu);
+
+void rlc(struct cpu_struct* cpu, uint8_t reg);
+void rl(struct cpu_struct* cpu, uint8_t reg);
+void rrc(struct cpu_struct* cpu, uint8_t reg);
+void rr(struct cpu_struct* cpu, uint8_t reg);
