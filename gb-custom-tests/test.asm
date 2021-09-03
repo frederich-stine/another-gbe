@@ -8,18 +8,13 @@ SECTION "Header", ROM0[$100]
 
 EntryPoint:
 	ld a, $00
-	ld b, $00
+	ld b, $01
 	ld c, $10
-FunA:
-	call FunB
-	jp Done
-FunB:
-	dec c
-	call nz, FunC
-	cp c
-	jp nz, FunB
-FunC:
-	inc b
-	ret
+	bit 0, b
+	bit 4, c
+	res 0, b
+	set 1, b
+	res 4, c
+	set 5, c
 Done:
 	jp Done

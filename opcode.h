@@ -3,6 +3,7 @@
 #include "cpu.h"
 #include <stdint.h>
 
+
 void nop(struct cpu_struct* cpu);
 void jp(struct cpu_struct* cpu);
 void jphl(struct cpu_struct* cpu);
@@ -70,3 +71,11 @@ void rlc(struct cpu_struct* cpu, uint8_t reg);
 void rl(struct cpu_struct* cpu, uint8_t reg);
 void rrc(struct cpu_struct* cpu, uint8_t reg);
 void rr(struct cpu_struct* cpu, uint8_t reg);
+void sla(struct cpu_struct* cpu, uint8_t reg);
+void sra(struct cpu_struct* cpu, uint8_t reg);
+void srl(struct cpu_struct* cpu, uint8_t reg);
+void swap(struct cpu_struct* cpu, uint8_t reg);
+void bit(struct cpu_struct* cpu, uint8_t bit, uint8_t reg);
+
+void res(struct cpu_struct* cpu, uint8_t bit, uint8_t reg);
+void set(struct cpu_struct* cpu, uint8_t bit, uint8_t reg);

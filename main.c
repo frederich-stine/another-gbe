@@ -4,13 +4,19 @@
 #include "mmu.h"
 #include <stdio.h>
 
-int main()
+int main(int argc, char** argv)
 {
+	if(argc != 2)
+	{
+		printf("Error: Path to ROM is required\n");
+		return 0;
+	}
+
 	printf("*** Allcoating MMU ***\n");
 	cpu.mmu = allocate_mmu();
 	
 	printf("*** Loading cartridge from file ***\n");
-	load_cartridge_from_file("gb-custom-tests/test.gb", cpu.mmu);
+	load_cartridge_from_file(argv[1], cpu.mmu);
 
 	reset_cpu(&cpu);
 	

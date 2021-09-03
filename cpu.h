@@ -35,6 +35,7 @@
 #define reg_l 5
 #define reg_f 8
 
+
 struct cpu_struct {
 	// main Z80 registers
 	// uint8_t b, c, d, e, h, l, m, a, f;
@@ -44,6 +45,8 @@ struct cpu_struct {
 	uint8_t int_en;
 
 	struct mmu_struct* mmu;
+
+	uint8_t bit_mask[8];
 
 }cpu;
 

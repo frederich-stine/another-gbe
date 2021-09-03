@@ -592,12 +592,14 @@ void rst(struct cpu_struct* cpu, uint8_t offset)
 
 void rlc(struct cpu_struct* cpu, uint8_t reg)
 {
-	if (cpu->stand_regs[reg] & 0x80)
-		cpu->stand_regs[reg_f] = set_c_flag;
-	cpu->stand_regs[reg] << 1;
+	cpu->stand_regs[reg_f] = cpu->stand_regs[reg] & 0x80 ? set_c_flag : reset_c_flag;
+	
+	cpu->stand_regs[reg] = cpu->stand_regs[reg] << 1;
+	
+	if (cpu->stand_regs[reg_f] & c_flag)
+		cpu->stand_regs[reg] | 0x01;
 
-	if (cpu->stand_regs[reg] == 0)
-		cpu->stand_regs[reg_f] = set_z_flag;
+	cpu->stand_regs[reg_f] = cpu->stand_regs[reg] == 0 ? set_z_flag : reset_z_flag;
 
 	cpu->stand_regs[reg_f] = reset_n_flag;
 	cpu->stand_regs[reg_f] = reset_h_flag;
@@ -606,16 +608,14 @@ void rlc(struct cpu_struct* cpu, uint8_t reg)
 void rl(struct cpu_struct* cpu, uint8_t reg)
 {
 	uint8_t oldcarry = cpu->stand_regs[reg_f] & c_flag;
-	if (cpu->stand_regs[reg] & 0x80)
-		cpu->stand_regs[reg_f] = set_c_flag;
+	cpu->stand_regs[reg_f] = cpu->stand_regs[reg] & 0x80 ? set_c_flag : reset_c_flag;
 	
-	cpu->stand_regs[reg] << 1;
+	cpu->stand_regs[reg] = cpu->stand_regs[reg] << 1;
 
 	if (oldcarry)
 		cpu->stand_regs[reg] = cpu->stand_regs[reg] | 0x01;
 
-	if (cpu->stand_regs[reg] == 0)
-		cpu->stand_regs[reg_f] = set_z_flag;
+	cpu->stand_regs[reg_f] = cpu->stand_regs[reg] == 0 ? set_z_flag : reset_z_flag;
 
 	cpu->stand_regs[reg_f] = reset_n_flag;
 	cpu->stand_regs[reg_f] = reset_h_flag;
@@ -623,12 +623,14 @@ void rl(struct cpu_struct* cpu, uint8_t reg)
 
 void rrc(struct cpu_struct* cpu, uint8_t reg)
 {
-	if (cpu->stand_regs[reg] & 0x01)
-		cpu->stand_regs[reg_f] = set_c_flag;
-	cpu->stand_regs[reg] >> 1;
+	cpu->stand_regs[reg_f] = cpu->stand_regs[reg] & 0x01 ? set_c_flag : reset_c_flag;
+	
+	cpu->stand_regs[reg] = cpu->stand_regs[reg] >> 1;
+	
+	if (cpu->stand_regs[reg_f] & c_flag)
+		cpu->stand_regs[reg] = cpu->stand_regs[reg] | 0x80;
 
-	if (cpu->stand_regs[reg] == 0)
-		cpu->stand_regs[reg_f] = set_z_flag;
+	cpu->stand_regs[reg_f] = cpu->stand_regs[reg] == 0 ? set_z_flag : reset_z_flag;
 
 	cpu->stand_regs[reg_f] = reset_n_flag;
 	cpu->stand_regs[reg_f] = reset_h_flag;
@@ -637,17 +639,89 @@ void rrc(struct cpu_struct* cpu, uint8_t reg)
 void rr(struct cpu_struct* cpu, uint8_t reg)
 {
 	uint8_t oldcarry = cpu->stand_regs[reg_f] & c_flag;
-	if (cpu->stand_regs[reg] & 0x01)
-		cpu->stand_regs[reg_f] = set_c_flag;
+	cpu->stand_regs[reg_f] = cpu->stand_regs[reg] & 0x01 ? set_c_flag : reset_c_flag;
 	
-	cpu->stand_regs[reg] >> 1;
+	cpu->stand_regs[reg] = cpu->stand_regs[reg] >> 1;
 
 	if (oldcarry)
 		cpu->stand_regs[reg] = cpu->stand_regs[reg] | 0x80;
 
-	if (cpu->stand_regs[reg] == 0)
-		cpu->stand_regs[reg_f] = set_z_flag;
+	cpu->stand_regs[reg_f] = cpu->stand_regs[reg] == 0 ? set_z_flag : reset_z_flag;
 
 	cpu->stand_regs[reg_f] = reset_n_flag;
 	cpu->stand_regs[reg_f] = reset_h_flag;
+}
+
+void sla(struct cpu_struct* cpu, uint8_t reg)
+{
+	cpu->stand_regs[reg_f] = cpu->stand_regs[reg] & 0x80 ? set_c_flag : reset_c_flag;
+	cpu->stand_regs[reg] = cpu->stand_regs[reg] << 1;
+
+	cpu->stand_regs[reg_f] = cpu->stand_regs[reg] == 0 ? set_z_flag : reset_z_flag;
+
+	cpu->stand_regs[reg_f] = reset_n_flag;
+	cpu->stand_regs[reg_f] = reset_h_flag;
+}
+
+void sra(struct cpu_struct* cpu, uint8_t reg)
+{
+	uint8_t arithmetic = 0;
+	int8_t temp = (int8_t) cpu->stand_regs[reg];
+	cpu->stand_regs[reg_f] = cpu->stand_regs[reg] & 0x01 ? set_c_flag : reset_c_flag;
+	
+	temp >> 1;
+	cpu->stand_regs[reg] = (uint8_t) temp;
+
+	cpu->stand_regs[reg_f] = cpu->stand_regs[reg] == 0 ? set_z_flag : reset_z_flag;
+
+	cpu->stand_regs[reg_f] = reset_n_flag;
+	cpu->stand_regs[reg_f] = reset_h_flag;
+}
+
+void srl(struct cpu_struct* cpu, uint8_t reg)
+{
+	cpu->stand_regs[reg_f] = cpu->stand_regs[reg] & 0x01 ? set_c_flag : reset_c_flag;
+	
+	cpu->stand_regs[reg] = cpu->stand_regs[reg] >> 1;
+
+	cpu->stand_regs[reg_f] = cpu->stand_regs[reg] == 0 ? set_z_flag : reset_z_flag;
+
+	cpu->stand_regs[reg_f] = reset_n_flag;
+	cpu->stand_regs[reg_f] = reset_h_flag;
+}
+
+void swap(struct cpu_struct* cpu, uint8_t reg)
+{
+	uint8_t temp = cpu->stand_regs[reg] << 4;
+	temp = temp | (cpu->stand_regs[reg]>>4 & 0x0F);
+	cpu->stand_regs[reg] = temp;
+
+	cpu->stand_regs[reg_f] = cpu->stand_regs[reg] == 0 ? set_z_flag : reset_z_flag;
+	cpu->stand_regs[reg_f] = reset_c_flag;
+	cpu->stand_regs[reg_f] = reset_n_flag;
+	cpu->stand_regs[reg_f] = reset_h_flag;
+}
+
+void bit(struct cpu_struct* cpu, uint8_t bit, uint8_t reg)
+{
+	bit = bit >> 3;
+	uint8_t temp = cpu->bit_mask[bit] & cpu->stand_regs[reg];
+
+	cpu->stand_regs[reg_f] = temp == 0 ? set_z_flag : reset_z_flag;
+
+	cpu->stand_regs[reg_f] = reset_n_flag;
+	cpu->stand_regs[reg_f] = set_h_flag;
+
+}
+
+void res(struct cpu_struct* cpu, uint8_t bit, uint8_t reg)
+{
+	bit = bit >> 3;
+	cpu->stand_regs[reg] = !(cpu->bit_mask[bit]) & cpu->stand_regs[reg];
+}
+
+void set(struct cpu_struct* cpu, uint8_t bit, uint8_t reg)
+{
+	bit = bit >> 3;
+	cpu->stand_regs[reg] = cpu->bit_mask[bit] | cpu->stand_regs[reg];
 }
